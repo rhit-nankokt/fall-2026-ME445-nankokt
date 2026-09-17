@@ -1,0 +1,65 @@
+%  Clean up the MATLAB environment:
+
+clearvars
+close all
+clc
+
+%  Specify the DE model parameter values, initial conditions, and
+%  integration settings:
+
+m = 0.5;                  %  kg
+g = 9.81;               %  m/s^2
+k = 200;                %  N/m
+L0 = 0.6;               %  m
+thetadot0 = pi;     %  rad
+muk = 0.2;
+r0 = 0.5;
+
+x30 = 0.8;                 %  m
+x3dot0 = -1;          	%  m/s
+
+dt = 0.001;             %  s
+tf = 7;                 %  s
+tol = 1e-6;
+
+%  Numerically integrate the DE model using ode45:
+
+t = (0 : dt : tf);                                  %  s
+Y0 = [x30, x3dot0];
+options = odeset("AbsTol", tol, "RelTol", tol);
+
+[t, Y_matrix] = ode45(@NI_1_PP_func, t, Y0, options, m, g, k, L0, muk, r0, thetadot0);
+
+x3 = Y_matrix(:,1);              %  m
+x3dot = Y_matrix(:,2);           %  m/s
+
+%  Compute the energy and its time rate of change. As a check, integrate
+%  the time rate of change of the energy (using the trapezoidal rule) to
+%  make sure it and the computed energy match. Plot the results over time:
+
+
+Esys = 0.5.*m.*((r0.*thetadot0)^2 + x3dot.^2) + m*g.*x3 + 0.5*k*(x3-L0).^2;    %  J
+
+Esysdot = -muk*m*r0*(thetadot0^2)*abs(x3dot);                            %  W
+
+Esys_check = Esys(1) + cumtrapz(t, Esysdot);                    %  J
+
+figure
+plot(t, Esys, t, Esys_check, '--')
+xlabel("$t$ (s)", "Interpreter", "latex")
+ylabel("$E_\mathrm{sys}$ (J)", "Interpreter", "latex")
+legend("Actual", "From integrating $\dot{E}_\mathrm{sys}$", "Interpreter", "latex")
+
+figure
+plot(t, Esysdot)
+xlabel("$t$ (s)", "Interpreter", "latex")
+ylabel("$\dot{E}_\mathrm{sys}$ (W)", "Interpreter", "latex")
+
+%  Animate the ball's motion:
+
+% x1 = R*sin(phi0).*cos(theta);       %  m
+% x2 = R*sin(phi0).*sin(theta);       %  m
+% x3 = R*cos(phi0);                   %  m
+% 
+% speed = 1;
+% animate_ball_on_cone(x1, x2, x3, phi0, t, speed);
