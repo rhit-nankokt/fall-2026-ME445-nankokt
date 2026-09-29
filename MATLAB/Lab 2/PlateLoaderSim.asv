@@ -99,24 +99,38 @@ classdef PlateLoaderSim < hgsetget
         end
         function response = specialMove(obj)
             for i = 1:4
-                xCommand = sprintf('X-AXIS %d\n',i);
-                fprintf(xCommand); 
-                fprintf('GRIPPER OPEN\n');
-                fprintf('Z-AXIS EXTEND\n');
-                fprintf('GRIPPER CLOSE\n');
-                fprintf('Z-AXIS RETRACT\n'); 
+                xCommand = sprintf('X-AXIS %d',i);
+                writeline(obj.serialRobot,xCommand);
+                response = readline(obj.serialRobot);
         
-                xCommand = sprintf('X-AXIS %d\n',5);
-                fprintf(xCommand); 
-                fprintf('Z-AXIS EXTEND\n');
-                fprintf('GRIPPER OPEN\n');
-                fprintf('Z-AXIS RETRACT\n'); 
+                writeline(obj.serialRobot,'GRIPPER OPEN');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS EXTEND');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'GRIPPER CLOSE');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS RETRACT');
+                response = readline(obj.serialRobot);
+        
+                xCommand = sprintf('X-AXIS %d',5);
+                writeline(obj.serialRobot,xCommand);
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS EXTEND');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'GRIPPER OPEN');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS RETRACT');
+                response = readline(obj.serialRobot);
             end
             obj.xAxisPosition = 5;
             obj.isZAxisExtended = false;
             obj.isGripperClosed = false;
-            obj.isPlatePresent = false;
-            response = 'READY';
         end
         function response = setTimeValues(obj,timeDelays)
             % setTimeValues(timeDelays) - Passes a matrix with 5 rows (froms)

@@ -149,6 +149,37 @@ classdef PlateLoader < hgsetget
             writeline(obj.serialRobot,'LOADER_STATUS');
             response = readline(obj.serialRobot);
         end
+        function response = specialMove(obj)
+            for i = 1:4
+                xCommand = sprintf('X-AXIS %d',i);
+                writeline(obj.serialRobot,xCommand);
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'GRIPPER OPEN');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS EXTEND');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'GRIPPER CLOSE');
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'Z-AXIS RETRACT');
+                response = readline(obj.serialRobot);
+        
+                xCommand = sprintf('X-AXIS %d',5);
+                writeline(obj.serialRobot,xCommand);
+                response = readline(obj.serialRobot);
+        
+                writeline(obj.serialRobot,'GRIPPER OPEN');
+                response = readline(obj.serialRobot);
+        
+                
+            end
+            obj.xAxisPosition = 5;
+            obj.isZAxisExtended = false;
+            obj.isGripperClosed = false;
+        end
 
         % Other to todo's if someone wants to.  Implement the additional
         %  weird commands: STOP_CYLINDER, VERSION,
