@@ -29,23 +29,77 @@ void setup() {
   pinMode(LED_BUILTIN,OUTPUT);
 }
 
+// void loop() {
+//   if (isStringComplete) {
+
+//     // clear the string:
+//     // TODO: Do the command
+//     if (inputString.equals("LED ON")) {
+//       digitalWrite(13,HIGH);
+//       Serial.println("The LED is now on!");
+//     } else if (inputString.equals("LED OFF")) {
+//       digitalWrite(13,LOW);
+//       Serial.println("The LED is now off!");
+//     } else {
+//       Serial.print("Unknown command --> ");
+//       Serial.println(inputString);
+//     }
+//     if (cmd.startsWith("FLASH ")) {
+//     Serial.println("OK");                     // reply right away
+
+//     int firstSpace  = cmd.indexOf(' ');            // space after FLASH
+//     int secondSpace = cmd.indexOf(' ', firstSpace + 1);
+
+//     int flashes  = cmd.substring(firstSpace + 1, secondSpace).toInt();  // "5"
+//     int periodMs = cmd.substring(secondSpace + 1).toInt();              // "1000"
+
+//     for (int i = 0; i < flashes; i++) {
+//         digitalWrite(13, HIGH);
+//         delay(periodMs / 2);
+//         digitalWrite(13, LOW);
+//         delay(periodMs / 2);
+//     }
+// }
+  
+
+
+//     inputString = "";
+//     isStringComplete = false;
+//   }
+// }
+
 void loop() {
   if (isStringComplete) {
+    inputString.trim();   // remove any stray '\r' or spaces
 
-    // clear the string:
-    // TODO: Do the command
-    if (inputString.equals("LED ON")) {
-      digitalWrite(13,HIGH);
-      Serial.println("The LED is now on!");
-    } else if (inputString.equals("LED OFF")) {
-      digitalWrite(13,LOW);
-      Serial.println("The LED is now off!");
+    if (inputString.equals("on")) {
+      digitalWrite(LED_BUILTIN, HIGH);
+      Serial.println("LED On");
+
+    } else if (inputString.equals("off")) {
+      digitalWrite(LED_BUILTIN, LOW);
+      Serial.println("LED Off");
+
+    } else if (inputString.startsWith("FLASH ")) {
+      Serial.println("OK");   // reply first so the web page doesn't wait
+
+      int firstSpace  = inputString.indexOf(' ');
+      int secondSpace = inputString.indexOf(' ', firstSpace + 1);
+
+      int flashes  = inputString.substring(firstSpace + 1, secondSpace).toInt();
+      int periodMs = inputString.substring(secondSpace + 1).toInt();
+
+      for (int i = 0; i < flashes; i++) {
+        digitalWrite(LED_BUILTIN, HIGH);
+        delay(periodMs / 2);
+        digitalWrite(LED_BUILTIN, LOW);
+        delay(periodMs / 2);
+      }
+
     } else {
       Serial.print("Unknown command --> ");
       Serial.println(inputString);
     }
-  
-
 
     inputString = "";
     isStringComplete = false;
